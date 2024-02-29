@@ -20,13 +20,30 @@ namespace ActorRest2.Controllers
         // GET: api/<ActorsController>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet]
-        public ActionResult<IEnumerable<Actor>> Get()
+        public ActionResult<IEnumerable<Actor>> Get([FromHeader] string? amount)
         {
             IEnumerable<Actor> actorList =
                 _actorsRepository.Get(null, null, null, null);
+            if (amount != null)
+            {
+                if (int.TryParse(amount, out int count))
+                {
+                    actorList = actorList.Take(count);
+                }
+                else
+                {
+                    return BadRequest("Amount must be a number");
+                }
+            }
+            else
+            {
+                return BadRequest("Amount must be filled out");
+            }
             if (actorList.Any())
             {
+                Response.Headers.Add("TotalCount", "" + actorList.Count());
                 return Ok(actorList);
             }
             else
@@ -36,8 +53,8 @@ namespace ActorRest2.Controllers
         }
 
 
-            // GET api/<ActorsController>/5
-            [HttpGet("{id}")]
+        // GET api/<ActorsController>/5
+        [HttpGet("{id}")]
         public Actor? Get(int id)
         {
             return _actorsRepository.GetById(id);
