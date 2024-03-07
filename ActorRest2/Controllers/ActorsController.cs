@@ -17,15 +17,16 @@ namespace ActorRest2.Controllers
             _actorsRepository = actorsRepository;
         }
 
-        // GET: api/<ActorsController>
+        // GET: api/Actors?nameFilter=Vin&minBirthYear=1900
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet]
-        public ActionResult<IEnumerable<Actor>> Get([FromHeader] string? amount)
+        public ActionResult<IEnumerable<Actor>> Get([FromHeader] string? amount,
+            [FromQuery] string? nameFilter, [FromQuery] int? minBirthYear)
         {
             IEnumerable<Actor> actorList =
-                _actorsRepository.Get(null, null, null, null);
+                _actorsRepository.Get(nameFilter, minBirthYear, null, null);
             if (amount != null)
             {
                 if (int.TryParse(amount, out int count))
@@ -37,10 +38,10 @@ namespace ActorRest2.Controllers
                     return BadRequest("Amount must be a number");
                 }
             }
-            else
-            {
-                return BadRequest("Amount must be filled out");
-            }
+            //else
+            //{
+            //    return BadRequest("Amount must be filled out");
+            //}
             if (actorList.Any())
             {
                 Response.Headers.Add("TotalCount", "" + actorList.Count());

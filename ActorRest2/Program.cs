@@ -18,8 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IActorsRepository>(
-    new ActorsRepositoryList());
+builder.Services.AddSingleton<IActorsRepository>( new ActorsRepositoryList());
 
 var app = builder.Build();
 
